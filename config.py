@@ -8,7 +8,8 @@ class Database(BaseModel):
     username: str = 'admin'
     password: str = 'admin'
     name: str = 'auth'
-    sslmode: bool = False
+    sslmode: str = 'disable' #disable allow prefer require verify-ca verify-full 
+    isolation_level: str = 'READ COMMITTED' #or REPEATABLE READ or SERIALIZABLE
 
     @computed_field
     def async_connection(self) -> PostgresDsn:
