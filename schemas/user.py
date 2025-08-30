@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, EmailStr, Field
 
 from models import UserScope
@@ -11,6 +13,14 @@ class ScopeScheme(BaseModel):
 class CreateUserScheme(BaseModel):
     username: EmailStr = Field(max_length=100)
     hashed_password: str = Field(max_length=60)
+
+
+class UserReadScheme(BaseModel):
+    id: uuid.UUID
+    username: EmailStr = Field(max_length=100)
+    is_active: bool
+    is_verified: bool
+    scopes: list[ScopeScheme]
 
 
 class UpdateUserSchema(BaseModel):
