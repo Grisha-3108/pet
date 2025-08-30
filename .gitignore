@@ -11,3 +11,6 @@ wheels/
 
 # No .env parameters
 .env
+
+# No keys
+/keys

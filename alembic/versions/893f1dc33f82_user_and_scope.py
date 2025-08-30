@@ -1,8 +1,8 @@
-"""Users and scopes
+"""User and scope
 
-Revision ID: fd257895d0b1
+Revision ID: 893f1dc33f82
 Revises: 
-Create Date: 2025-08-30 12:44:39.172312
+Create Date: 2025-08-30 19:57:53.705589
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'fd257895d0b1'
+revision: str = '893f1dc33f82'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,10 +23,11 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('username', sa.String(length=100), nullable=False),
-    sa.Column('hashed_password', sa.String(length=100), nullable=False),
+    sa.Column('hashed_password', sa.String(length=60), nullable=False),
     sa.Column('is_active', sa.Boolean(), server_default='True', nullable=False),
     sa.Column('is_verified', sa.Boolean(), server_default='True', nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('user_scopes',
     sa.Column('user_id', sa.UUID(), nullable=False),
@@ -34,6 +35,7 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='user_id_fk', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('user_id', 'scope', name='user_scopes_pk')
     )
+
 
 def downgrade() -> None:
     """Downgrade schema."""

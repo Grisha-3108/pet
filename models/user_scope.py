@@ -27,9 +27,7 @@ class UserScope(Base):
     scope: Mapped[Scope] = mapped_column(Enum(Scope), nullable=False)
 
     user: Mapped['User'] = relationship('User', 
-                                        back_populates='User.scopes', 
-                                        foreign_keys=[user_id],
-                                        cascade='all; delete-orphan')
+                                        back_populates='scopes')
 
     __table_args__ = (
         PrimaryKeyConstraint(user_id, scope, name='user_scopes_pk'),

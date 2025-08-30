@@ -6,6 +6,7 @@ from models import User, UserScope
 from schemas.user import (CreateUserScheme,
                           ScopeScheme,
                           UpdateUserSchema)
+from authorization.hashing import hash_password
 
 
 class UserDAO(BaseDAO):
@@ -14,8 +15,7 @@ class UserDAO(BaseDAO):
     @classmethod
     async def create_user(cls, user: CreateUserScheme) -> model:
         user_db = cls.model(username = user.username,
-                            hashed_password = user.hashed_password)
-        
+                            hashed_password = hash_password(user.password))
         async with cls.async_session_factory() as async_session:
             async_session.add(user_db)
             await async_session.commit()
