@@ -1,0 +1,49 @@
+import uuid
+from typing import Literal
+
+from dao.base_dao import BaseDAO
+from models import User, UserScope
+from schemas.user import (CreateUserScheme,
+                          ScopeScheme,
+                          UpdateUserSchema)
+
+
+class UserDAO(BaseDAO):
+    model = User
+        
+    @classmethod
+    async def create_user(cls, user: CreateUserScheme) -> model:
+        user_db = cls.model(username = user.username,
+                            hashed_password = user.hashed_password)
+        
+        async with cls.async_session_factory() as async_session:
+            async_session.add(user_db)
+            await async_session.commit()
+            return user_db
+        
+    @classmethod
+    async def grant_scopes(cls, id: uuid.UUID, scopes: list[ScopeScheme]) -> Literal[True]:
+        async with cls.async_session_factory() as async_session:
+            user = await async_session.get(cls.model, id)
+            for scope in scopes:
+                user.scopes.append(UserScope(scope=scope.scope))
+            await async_session.commit()
+        return 
+    
+    @classmethod
+    async def revoke_scopes(cls, id: uuid.UUID, scopes: list[ScopeScheme]) -> Literal[True]:
+        async with cls.async_session_factory() as async_session:
+            user = await async_session.get(cls.model, id)
+            user.scopes = [user_scope for user_scope in user.scopes if user_scope.scope 
+                           not in [scope.scope for scope in scopes]]
+            await async_session.commit()
+        return True
+    
+    @classmethod
+    async def update_user(cls, id: uuid.UUID, new: UpdateUserSchema) -> model:
+        async with cls.async_session_factory() as async_session:
+            user = await async_session.get(cls.model, id)
+            for attr, value in new.model_dump(exclude_none=True):
+                setattr(user, attr, value)
+            await async_session.commit()
+            return user

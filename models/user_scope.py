@@ -20,11 +20,16 @@ class Scope(enum.Enum):
 
 class UserScope(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(UUID, 
-                                               ForeignKey('users.id', ondelete='CASCADE', name='user_id_fk'), 
+                                               ForeignKey('users.id', 
+                                                          ondelete='CASCADE',
+                                                          name='user_id_fk'), 
                                                nullable=False)
     scope: Mapped[Scope] = mapped_column(Enum(Scope), nullable=False)
 
-    user: Mapped['User'] = relationship('User', back_populates='User.scopes', foreign_keys=[user_id])
+    user: Mapped['User'] = relationship('User', 
+                                        back_populates='User.scopes', 
+                                        foreign_keys=[user_id],
+                                        cascade='all; delete-orphan')
 
     __table_args__ = (
         PrimaryKeyConstraint(user_id, scope, name='user_scopes_pk'),

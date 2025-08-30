@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
     username: Mapped[str] = mapped_column(String(100), nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String(100), nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(60), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default=str(True))
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default=str(True))
 
