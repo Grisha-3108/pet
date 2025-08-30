@@ -10,7 +10,7 @@ from config import settings
 
 async_engine = create_async_engine(url=settings.db.async_connection, 
                                    isolation_level = settings.db.isolation_level,
-                                   connect_args = {'sslmode': settings.db.sslmode})
+                                   connect_args = {'ssl': settings.db.sslmode})
 
 
 sync_engine = create_engine(url=settings.db.sync_connection, 
