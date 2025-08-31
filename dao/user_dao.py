@@ -47,3 +47,11 @@ class UserDAO(BaseDAO):
                 setattr(user, attr, value)
             await async_session.commit()
             return user
+        
+    @classmethod 
+    async def activate_user(cls, id: uuid.UUID) -> Literal[True]:
+        async with cls.async_session_factory() as async_session:
+            user = await async_session.get(cls.model, id)
+            user.is_verified = True
+            await async_session.commit()
+        return True

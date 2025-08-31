@@ -36,8 +36,10 @@ class EmailServer(BaseModel):
     port: int = Field(ge=0, le=65535, default=587)
     username: str | None = None
     password: str | None = None
+    sender: str = 'rool@localhost'
     starttls: bool = False
     use_tls: bool = True
+    verify_token_exp: timedelta = timedelta(hours=1)
 
 
 class Settings(BaseSettings):
