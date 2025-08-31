@@ -1,12 +1,15 @@
 from datetime import timedelta
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import BaseModel, computed_field, PostgresDsn
+from pydantic import (BaseModel, 
+                      computed_field, 
+                      PostgresDsn, 
+                      Field)
 
 
 class Database(BaseModel):
     host: str = 'localhost'
-    port: int = 5432
+    port: int = Field(ge=0, le=65535, default=5432)
     username: str = 'admin'
     password: str = 'admin'
     name: str = 'auth'
@@ -28,11 +31,20 @@ class AccessToken(BaseModel):
     public_key: str = 'keys/public.pem'
 
 
+class EmailServer(BaseModel):
+    host: str = 'localhost'
+    port: int = Field(ge=0, le=65535, default=587)
+    username: str | None = None
+    password: str | None = None
+    starttls: bool = False
+    use_tls: bool = True
+
 
 class Settings(BaseSettings):
     db: Database = Database()
     auth_prefix: str = '/auth'
     token: AccessToken = AccessToken()
+    email: EmailServer = EmailServer()
 
     model_config = SettingsConfigDict(
         case_sensitive=False,
