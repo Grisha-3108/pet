@@ -19,6 +19,7 @@ class UserDAO(BaseDAO):
         async with cls.async_session_factory() as async_session:
             async_session.add(user_db)
             await async_session.commit()
+            await async_session.refresh(user_db)
             return user_db
         
     @classmethod
@@ -28,7 +29,7 @@ class UserDAO(BaseDAO):
             for scope in scopes:
                 user.scopes.append(UserScope(scope=scope.scope))
             await async_session.commit()
-        return 
+        return True
     
     @classmethod
     async def revoke_scopes(cls, id: uuid.UUID, scopes: list[ScopeScheme]) -> Literal[True]:
@@ -46,6 +47,7 @@ class UserDAO(BaseDAO):
             for attr, value in new.model_dump(exclude_none=True):
                 setattr(user, attr, value)
             await async_session.commit()
+            await async_session.refresh(user)
             return user
         
     @classmethod 

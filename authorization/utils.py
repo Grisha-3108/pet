@@ -59,7 +59,7 @@ async def authenticate_user(username: str, password: str, scopes: list[str] | No
     if not check_password(password, user.hashed_password):
         raise authenticate_error
     
-    user_scopes = [scope.scope for scope in user.scopes]
+    user_scopes = [scope.scope.name for scope in user.scopes]
     for scope in scopes:
         if scope not in user_scopes:
             raise authenticate_error

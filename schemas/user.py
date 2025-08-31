@@ -1,17 +1,23 @@
 import uuid
+from typing import Annotated
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import (BaseModel, 
+                      EmailStr, 
+                      Field, 
+                      ConfigDict)
 
 from models.user_scope import Scope
 
 
 class ScopeScheme(BaseModel):
     scope: Scope
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateUserScheme(BaseModel):
     username: EmailStr = Field(max_length=100)
     password: str = Field(max_length=60)
+
 
 
 class UserReadScheme(BaseModel):
@@ -20,7 +26,9 @@ class UserReadScheme(BaseModel):
     is_active: bool
     is_verified: bool
     scopes: list[ScopeScheme] = Field(default_factory=list)
+    model_config = ConfigDict(from_attributes=True)
 
+    
 
 class UpdateUserSchema(BaseModel):
     username: EmailStr | None = Field(max_length=100, default=None)

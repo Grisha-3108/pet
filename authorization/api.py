@@ -5,8 +5,7 @@ from fastapi import (APIRouter,
                      BackgroundTasks,
                      Depends, HTTPException,
                      status)
-from fastapi.security import (OAuth2PasswordBearer,
-                              OAuth2PasswordRequestForm)
+from fastapi.security import OAuth2PasswordRequestForm
 
 from models.user_scope import Scope
 from dao.user_dao import UserDAO
@@ -19,10 +18,7 @@ from schemas.user import (CreateUserScheme,
 from .utils import authenticate_user, create_token, decode_token
 from models import User
 from authorization.mail import send_verify_request
-
-oauth_scheme = OAuth2PasswordBearer(tokenUrl=f'{settings.auth_prefix}/login',
-                                    description='Авторизация по логину и паролю',
-                                    scopes={e.name: e.value for e in Scope})
+from .dependencies import get_user
 
 auth_router = APIRouter(prefix=settings.auth_prefix, 
                         tags=['Auth'])
@@ -32,10 +28,7 @@ auth_router = APIRouter(prefix=settings.auth_prefix,
                   response_model=UserReadScheme)
 async def register(user_data: CreateUserScheme):
     user = await UserDAO.create_user(user_data)
-    return UserReadScheme(id=user.id, 
-                          username=user.username, 
-                          is_active=user.is_active,
-                          is_verified=user.is_verified)
+    return UserReadScheme.model_validate(user)
 
 
 @auth_router.post('/login')
@@ -49,10 +42,6 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     return {'access_token': access_token, 
             'token_type' : 'Bearer'}
 
-
-@auth_router.get('/token')
-async def get_token(token: str = Depends(oauth_scheme)):
-    return {'token': token}
 
 
 @auth_router.post('/verify-request')
@@ -74,3 +63,8 @@ async def verify_request(verify: RequestVerifySchema):
 async def verify(token: VerifySchema):
     payload = await decode_token(token=token.verify_token)
     return await UserDAO.activate_user(uuid.UUID(payload['sub']))
+
+
+@auth_router.get('/me')
+async def me(user = Depends(get_user())):
+    return UserReadScheme.model_validate(user)
