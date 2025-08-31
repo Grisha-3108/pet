@@ -2,7 +2,7 @@ from typing import Annotated
 import uuid
 
 from fastapi import (APIRouter, 
-                     BackgroundTasks,
+                     Security,
                      Depends, HTTPException,
                      status)
 from fastapi.security import OAuth2PasswordRequestForm
@@ -10,11 +10,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from models.user_scope import Scope
 from dao.user_dao import UserDAO
 from config import settings
-from schemas.user import (CreateUserScheme, 
-                          UserReadScheme,
+from schemas.user import (CreateUserSchema, 
+                          UserReadSchema,
                           UpdateUserSchema,
-                          RequestVerifySchema,
-                          VerifySchema)
+                          EmailIdSchema,
+                          VerifySchema,
+                          EmailWithScopesSchema)
 from .utils import authenticate_user, create_token, decode_token
 from models import User
 from authorization.mail import send_verify_request
@@ -25,10 +26,14 @@ auth_router = APIRouter(prefix=settings.auth_prefix,
 
 
 @auth_router.post('/register',
-                  response_model=UserReadScheme)
-async def register(user_data: CreateUserScheme):
+                  response_model=UserReadSchema)
+async def register(user_data: CreateUserSchema):
+    user = await UserDAO.get_by_filter(username=user_data.username)
+    if user:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                            detail='Пользователь с такой почтой уже существует')
     user = await UserDAO.create_user(user_data)
-    return UserReadScheme.model_validate(user)
+    return UserReadSchema.model_validate(user)
 
 
 @auth_router.post('/login')
@@ -45,7 +50,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
 
 @auth_router.post('/verify-request')
-async def verify_request(verify: RequestVerifySchema):
+async def verify_request(verify: EmailIdSchema):
     verify_error = HTTPException(status_code=status.HTTP_409_CONFLICT,
                                  detail='Пользователя с таким email не существует или он уже активирован или он не активен')
     user: User = await UserDAO.get_by_filter(username=verify.email)
@@ -67,4 +72,27 @@ async def verify(token: VerifySchema):
 
 @auth_router.get('/me')
 async def me(user = Depends(get_user())):
-    return UserReadScheme.model_validate(user)
+    return UserReadSchema.model_validate(user)
+
+
+@auth_router.post('/grant-scope')
+async def grant(grant_scopes: EmailWithScopesSchema, user = Security(get_user(active=True, verified=True), scopes=[Scope.modify_scope.name])):
+    await UserDAO.grant_scopes(grant_scopes.email, grant_scopes.scopes)
+    return {'email': grant_scopes.email, 'grant_scopes': grant_scopes.scopes}
+
+
+@auth_router.post('/revoke-scope')
+async def grant(grant_scopes: EmailWithScopesSchema, user = Security(get_user(active=True, verified=True), scopes=[Scope.modify_scope.name])):
+    await UserDAO.revoke_scopes(grant_scopes.email, grant_scopes.scopes)
+    return {'email': grant_scopes.email, 'revoke_scopes': grant_scopes.scopes}
+
+
+@auth_router.patch('/user')
+async def patch_user(update: UpdateUserSchema, user = Security(get_user(active=True, verified=True), scopes=[Scope.update.name])):
+    user = await UserDAO.update_user(update.username, update)
+    return user
+
+
+@auth_router.delete('/user')
+async def delete_user(user: EmailIdSchema):
+    return await UserDAO.delete_user(user.email)
