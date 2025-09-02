@@ -4,7 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import (BaseModel, 
                       computed_field, 
                       PostgresDsn, 
-                      Field)
+                      Field,
+                      HttpUrl)
 
 
 class Database(BaseModel):
@@ -48,6 +49,8 @@ class RabbitMQ(BaseModel):
     username: str = 'admin'
     password: str = 'admin'
     ssl: bool = False
+    login_queue: str = 'login_users'
+    logout_queue: str = 'logout_users'
     
     message_ttl: int | timedelta = 3600
 
@@ -57,10 +60,16 @@ class RabbitMQ(BaseModel):
 
 class Settings(BaseSettings):
     db: Database = Database()
+    test_db: Database = Database(name='test_auth')
     auth_prefix: str = '/auth'
     token: AccessToken = AccessToken()
+    test_token: AccessToken = AccessToken()
     email: EmailServer = EmailServer()
+    test_email: EmailServer = EmailServer()
     rabbitmq: RabbitMQ = RabbitMQ()
+    test_rabbit: RabbitMQ = RabbitMQ(login_queue='test_login_users', logout_queue='test_logout_users')
+    test_mode: bool = True
+    test_base_url: HttpUrl = 'http://localhost'
 
     model_config = SettingsConfigDict(
         case_sensitive=False,

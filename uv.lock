@@ -552,11 +552,14 @@ dependencies = [
     { name = "asyncpg" },
     { name = "bcrypt" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "orjson" },
     { name = "psycopg2" },
     { name = "pydantic", extra = ["email"] },
     { name = "pydantic-settings" },
     { name = "pyjwt", extra = ["crypto"] },
+    { name = "pytest-async" },
+    { name = "pytest-asyncio" },
     { name = "python-multipart" },
     { name = "sqlalchemy-utils" },
     { name = "uvicorn" },
@@ -579,11 +582,14 @@ requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
     { name = "bcrypt", specifier = ">=4.3.0" },
     { name = "fastapi", specifier = ">=0.116.1" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "orjson", specifier = ">=3.11.3" },
     { name = "psycopg2", specifier = ">=2.9.10" },
     { name = "pydantic", extras = ["all", "email"], specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pyjwt", extras = ["crypt", "crypto"], specifier = ">=2.10.1" },
+    { name = "pytest-async", specifier = ">=0.1.1" },
+    { name = "pytest-asyncio", specifier = ">=1.1.0" },
     { name = "python-multipart", specifier = ">=0.0.20" },
     { name = "sqlalchemy-utils", specifier = ">=0.41.2" },
     { name = "uvicorn", extras = ["all"], specifier = ">=0.35.0" },
@@ -773,6 +779,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ff/b6/c15344fd2894fe93f15ce0f503d25afc2506ebe01a3c3ea52044169d510c/pytest_async-0.1.1.tar.gz", hash = "sha256:0d6ffd3ebac2f3aa47d606dbae1984750268a89dc8caf4a908ba61c60299cdfd", size = 5339, upload-time = "2020-02-26T17:31:21.138Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/89/4f/bdd43dd0838c2b0c0487a8de0480a30fb797e49abc4c8c68aca2912fd636/pytest_async-0.1.1-py3-none-any.whl", hash = "sha256:11cc41eef82592951d56c2bb9b0e6ab21b2f0f00663e78d95694a80d965be930", size = 2778, upload-time = "2020-02-26T17:31:18.587Z" },
+]
+
+[[package]]
+name = "pytest-asyncio"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4e/51/f8794af39eeb870e87a8c8068642fc07bce0c854d6865d7dd0f2a9d338c2/pytest_asyncio-1.1.0.tar.gz", hash = "sha256:796aa822981e01b68c12e4827b8697108f7205020f24b5793b3c41555dab68ea", size = 46652, upload-time = "2025-07-16T04:29:26.393Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/9d/bf86eddabf8c6c9cb1ea9a869d6873b46f105a5d292d3a6f7071f5b07935/pytest_asyncio-1.1.0-py3-none-any.whl", hash = "sha256:5fe2d69607b0bd75c656d1211f969cadba035030156745ee09e7d71740e58ecf", size = 15157, upload-time = "2025-07-16T04:29:24.929Z" },
 ]
 
 [[package]]
