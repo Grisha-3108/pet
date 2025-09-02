@@ -24,8 +24,8 @@ async def publish(username: str, scopes: str):
     async with channel:
         exchage = await channel.declare_exchange('login_exchange', 
                                          type=ExchangeType.DIRECT)
-        queue = await channel.declare_queue('login_users', 
+        queue = await channel.declare_queue(settings.rabbitmq.login_queue, 
                                       durable=True)
         await queue.bind(exchange=exchage, 
-                   routing_key='login_users')
-        await publish_with_retries(exchage, 'login_users', message)
+                   routing_key=settings.rabbitmq.logout_queue)
+        await publish_with_retries(exchage, settings.rabbitmq.login_queue, message)
