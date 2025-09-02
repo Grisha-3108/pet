@@ -42,11 +42,25 @@ class EmailServer(BaseModel):
     verify_token_exp: timedelta = timedelta(hours=1)
 
 
+class RabbitMQ(BaseModel):
+    host: str = 'localhost'
+    port: int = 5672
+    username: str = 'admin'
+    password: str = 'admin'
+    ssl: bool = False
+    
+    message_ttl: int | timedelta = 3600
+
+    @computed_field
+    def connection(self) -> str:
+        return f'amqp{'s' if self.ssl else ''}://{self.username}:{self.password}@{self.host}:{self.port}'
+
 class Settings(BaseSettings):
     db: Database = Database()
     auth_prefix: str = '/auth'
     token: AccessToken = AccessToken()
     email: EmailServer = EmailServer()
+    rabbitmq: RabbitMQ = RabbitMQ()
 
     model_config = SettingsConfigDict(
         case_sensitive=False,

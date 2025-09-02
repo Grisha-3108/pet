@@ -8,7 +8,7 @@ import uvicorn
 
 from authorization.api import auth_router
 from database import async_engine
-
+from producers.utils import close_connection
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
     )
     yield
     await async_engine.dispose()
+    await close_connection()
 
 
 app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)

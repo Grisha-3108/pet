@@ -20,6 +20,8 @@ from .utils import authenticate_user, create_token, decode_token
 from models import User
 from authorization.mail import send_verify_request
 from .dependencies import get_user
+import producers.login_producer as lp
+import producers.logout_producer as lop
 
 auth_router = APIRouter(prefix=settings.auth_prefix, 
                         tags=['Auth'])
@@ -44,8 +46,14 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     token_data = {'sub': str(user.id), 
                   'scopes': form_data.scopes}
     access_token = await create_token(token_data)
+    await lp.publish(form_data.username, ' '.join(form_data.scopes))
     return {'access_token': access_token, 
             'token_type' : 'Bearer'}
+
+
+@auth_router.post('/logout')
+async def logout(user: User = Security(get_user())):
+    await lop.publish(user.username)
 
 
 
