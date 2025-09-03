@@ -1,5 +1,6 @@
 import uuid
 from typing import Literal
+import logging
 
 from sqlalchemy import select
 
@@ -58,10 +59,11 @@ class UserDAO(BaseDAO):
     @classmethod
     async def delete_user(cls, email: str) -> Literal[True]:
         async with cls.async_session_factory() as async_session:
-            query = select(User).filter_by(username=email)
+            query = select(cls.model).filter_by(username=email)
             user = await async_session.scalar(query)
-            await async_session.delete(user)
-            await async_session.commit()
+            if user:
+                await async_session.delete(user)
+                await async_session.commit()
         return True
         
     @classmethod 

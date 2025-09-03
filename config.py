@@ -14,7 +14,7 @@ class Database(BaseModel):
     username: str = 'admin'
     password: str = 'admin'
     name: str = 'auth'
-    sslmode: str = 'disable' #disable require verify-ca verify-full 
+    sslmode: str = 'disable' #disable allow prefer require verify-ca verify-full 
     isolation_level: str = 'READ COMMITTED' #or REPEATABLE READ or SERIALIZABLE
 
     @computed_field
@@ -65,7 +65,6 @@ class Settings(BaseSettings):
     token: AccessToken = AccessToken()
     test_token: AccessToken = AccessToken()
     email: EmailServer = EmailServer()
-    test_email: EmailServer = EmailServer()
     rabbitmq: RabbitMQ = RabbitMQ()
     test_rabbit: RabbitMQ = RabbitMQ(login_queue='test_login_users', logout_queue='test_logout_users')
     test_mode: bool = True

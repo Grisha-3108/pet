@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declared_attr
 
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
+    __mapper_args__ = {'confirm_deleted_rows': False}
 
     @declared_attr.directive
     def __tablename__(cls) -> str:

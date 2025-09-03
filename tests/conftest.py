@@ -1,64 +1,33 @@
-import asyncio
 from typing import AsyncGenerator
 
-import pytest
 import pytest_asyncio
-from sqlalchemy.ext.asyncio import (create_async_engine, 
-                                    async_sessionmaker,
-                                    AsyncEngine,
-                                    AsyncSession)
+from sqlalchemy.ext.asyncio import (AsyncSession)
 import httpx
 import aio_pika
 
+from authorization.hashing import hash_password
 from config import settings
 from models.base import Base
+from models.user import User
+from models.user_scope import Scope, UserScope
 from main import app
+from database import async_session_factory, async_engine
 
 
-@pytest.fixture(scope='session')
-def event_loop():
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
-
-
-@pytest.fixture(autouse=True, scope='session')
-def check_test_mode():
+@pytest_asyncio.fixture(autouse=True, scope='session')
+async def init_test_environment():
     assert settings.test_mode
-
-
-@pytest_asyncio.fixture(scope='session')
-async def db() -> AsyncGenerator[AsyncEngine, None]:
-    async_engine = create_async_engine(url=settings.test_db.async_connection, 
-                                       connect_args={'ssl': settings.test_db.sslmode})
     async with async_engine.begin() as engine:
-        engine.run_sync(Base.metadata.drop_all)
-        engine.run_sync(Base.metadata.create_all)
-
-    yield async_engine
+        await engine.run_sync(Base.metadata.drop_all)
+        await engine.run_sync(Base.metadata.create_all)
+    yield
     await async_engine.dispose()
 
 
-@pytest_asyncio.fixture(scope='session')
-async def async_session_factory(db):
-    async_factory = async_sessionmaker(bind=db, 
-                                       autoflush=False, 
-                                       autocommit=False, 
-                                       expire_on_commit=False)
-    return async_factory
-
-
 @pytest_asyncio.fixture(scope='function')
-async def async_session(async_session_factory) -> AsyncGenerator[AsyncSession, None]:
+async def async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_factory() as session:
         yield session
-
-
-@pytest_asyncio.fixture(scope='session')
-async def test_client() -> AsyncGenerator[httpx.AsyncClient, None]:
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), 
-                                 base_url=settings.test_base_url) as client:
-        yield client
 
 
 @pytest_asyncio.fixture(scope='session')
@@ -83,3 +52,30 @@ async def get_message(request, rabbit_channel):
         msg = None
     await queue.purge()
     return msg
+
+
+@pytest_asyncio.fixture(scope='session')
+async def db_admin(async_session):
+    admin = User(username = 'Grisha-3108@yandex.ru',
+                 hashed_password = hash_password('11223344'),
+                 is_active = True,
+                 is_verified = True)
+    admin.scopes.extend([UserScope(scope = scope) for scope in Scope])
+    async_session.add(admin)
+    await async_session.commit()
+
+
+@pytest_asyncio.fixture(scope='session')
+async def test_client(request, db_admin) -> AsyncGenerator[httpx.AsyncClient, None]:
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), 
+                                 base_url=settings.test_base_url) as client:
+        response = await client.post(settings.auth_prefix + '/login', 
+                                     data={'grant_type': 'password',
+                                           'username': 'Grisha-3108@yandex.ru', 
+                                           'password': '11223344',
+                                           'scope': request.param[0]})
+        credentials = response.json()
+        assert credentials.get('token_type') in ('Bearer', 'bearer')
+        assert credentials.get('access_token') is not None
+        client.headers['Authorization'] = f'Bearer {credentials.get('access_token')}'
+        yield client
