@@ -25,7 +25,8 @@ async def close_connection() -> None:
 
 async def get_channel() -> AbstractChannel:
     conn = await get_connection()
-    return await conn.channel(publisher_confirms=True)
+    return await conn.channel(publisher_confirms=True, 
+                              on_return_raises=True)
 
 
 async def publish_with_retries(exchanger: AbstractExchange, 

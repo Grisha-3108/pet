@@ -6,21 +6,7 @@ from dao.user_dao import UserDAO
 from models import User, UserScope
 from models.user_scope import Scope
 from schemas.user import CreateUserSchema, ScopeSchema, UpdateUserSchema
-from authorization.hashing import (hash_password, 
-                                   check_password)
-from database import async_session_factory
-
-@pytest_asyncio.fixture()
-async def simple_user(async_session):
-    user = User(id='3ce3d031-f9c2-435a-88a3-af406deeb2d1',
-         username='simple_user@mail.ru',
-         hashed_password=hash_password('password'))
-    async_session.add(user)
-    await async_session.commit()
-    yield
-    await async_session.delete(user)
-    await async_session.commit()
-
+from authorization.hashing import check_password
 
 
 @pytest.mark.asyncio()

@@ -23,7 +23,7 @@ class UserDAO(BaseDAO):
             async_session.add(user_db)
             await async_session.commit()
             await async_session.refresh(user_db)
-            return user_db
+        return user_db
         
     @classmethod
     async def grant_scopes(cls, email: str, scopes: list[ScopeSchema]) -> Literal[True]:

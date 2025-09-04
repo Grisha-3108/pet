@@ -66,7 +66,7 @@ class Settings(BaseSettings):
     test_token: AccessToken = AccessToken()
     email: EmailServer = EmailServer()
     rabbitmq: RabbitMQ = RabbitMQ()
-    test_rabbit: RabbitMQ = RabbitMQ(login_queue='test_login_users', logout_queue='test_logout_users')
+    test_rabbitmq: RabbitMQ = RabbitMQ(login_queue='test_login_users', logout_queue='test_logout_users')
     test_mode: bool = True
     test_base_url: HttpUrl = 'http://localhost'
 
