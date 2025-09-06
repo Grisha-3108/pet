@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache
 
 # Virtual environments
 .venv
@@ -14,3 +15,9 @@ wheels/
 
 # No keys
 /keys
+
+#No vs code
+.vscode
+
+#No metrics dumps
+metrics

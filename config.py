@@ -57,6 +57,11 @@ class RabbitMQ(BaseModel):
     @computed_field
     def connection(self) -> str:
         return f'amqp{'s' if self.ssl else ''}://{self.username}:{self.password}@{self.host}:{self.port}'
+    
+class Prometheus(BaseModel):
+    endpoint: str = '/metrics'
+    username: str = 'admin'
+    password: str = 'admin'
 
 class Settings(BaseSettings):
     db: Database = Database()
@@ -67,8 +72,10 @@ class Settings(BaseSettings):
     email: EmailServer = EmailServer()
     rabbitmq: RabbitMQ = RabbitMQ()
     test_rabbitmq: RabbitMQ = RabbitMQ(login_queue='test_login_users', logout_queue='test_logout_users')
+    prometheus: Prometheus = Prometheus()
     test_mode: bool = False
     test_base_url: HttpUrl = 'http://localhost'
+    workers: int = 2
 
     model_config = SettingsConfigDict(
         case_sensitive=False,

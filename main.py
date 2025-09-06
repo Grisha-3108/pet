@@ -1,15 +1,19 @@
 from contextlib import asynccontextmanager
 import logging
+import os
+
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import multiprocess
 
 from authorization.api import auth_router
 from database import async_engine
 from producers.utils import close_connection
+from config import settings
+from middleware import metrics_router, PrometheusMetrics
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,14 +22,14 @@ async def lifespan(app: FastAPI):
         format='%(asctime)s.%(msecs)s %(levelname)s %(funcName)s %(lineno)s %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-    instrumentator.expose(app)
     yield
     await async_engine.dispose()
     await close_connection()
 
 
 app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
-instrumentator = Instrumentator().instrument(app=app)
+app.add_middleware(PrometheusMetrics)
+app.include_router(metrics_router)
 app.add_middleware(CORSMiddleware,
                    allow_credentials=False,
                    allow_origins=['*'],
@@ -39,5 +43,5 @@ if __name__ == "__main__":
         'main:app',
         host='localhost',
         port=8000,
-        reload=True
+        workers=settings.workers
     )
