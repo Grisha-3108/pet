@@ -8,7 +8,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from config import settings
 
 metrics_router = APIRouter(tags=['prometheus'])
-basic_scheme = HTTPBasic()
+basic_scheme = HTTPBasic() 
 
 @metrics_router.get(settings.prometheus.endpoint)
 def metrics(credentials: HTTPBasicCredentials = Depends(basic_scheme)):
@@ -17,7 +17,8 @@ def metrics(credentials: HTTPBasicCredentials = Depends(basic_scheme)):
         or not secrets.compare_digest(credentials.password.encode(),
                                   settings.prometheus.password.encode())):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='Неверный логин или пароль')
+                            detail='Неверный логин или пароль',
+                            headers={'WWW-Authenticate': 'Basic'})
     if os.getenv('PROMETHEUS_MULTIPROC_DIR'):
         registry = CollectorRegistry()
         multiprocess.MultiProcessCollector(registry)

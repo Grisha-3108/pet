@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/bin/ash
 
-export PROMETHEUS_MULTIPROC_DIR=$DIRSTACK/metrics
+export PROMETHEUS_MULTIPROC_DIR=$PWD/metrics
 
 if [ -d "$PROMETHEUS_MULTIPROC_DIR" ]; then
 rm -R "$PROMETHEUS_MULTIPROC_DIR"
 fi
 mkdir "$PROMETHEUS_MULTIPROC_DIR"
 
-uv run main.py
+python3 -m alembic upgrade head
+python3 main.py

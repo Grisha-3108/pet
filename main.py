@@ -41,7 +41,7 @@ app.include_router(router=auth_router)
 if __name__ == "__main__":
     uvicorn.run(
         'main:app',
-        host='localhost',
-        port=8000,
+        host=settings.host,
+        port=settings.port,
         workers=settings.workers
     )

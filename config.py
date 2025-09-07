@@ -76,6 +76,8 @@ class Settings(BaseSettings):
     test_mode: bool = False
     test_base_url: HttpUrl = 'http://localhost'
     workers: int = 2
+    host: str = '0.0.0.0'
+    port: int = 8000
 
     model_config = SettingsConfigDict(
         case_sensitive=False,

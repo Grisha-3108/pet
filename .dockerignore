@@ -1,0 +1,8 @@
+__pycache__
+.pytes_cache
+.venv
+.vscode
+keys
+metrics
+.env
+.coverage
