@@ -3,8 +3,8 @@ meta:
   toolchain:
     name: pip
     version: 3.13
-  build:
-    requirementsPath: build/requirements.txt
-  run:
-    command: source ./run.sh
-    containerPort: 8000
+build:
+  requirementsPath: build/requirements.txt
+run:
+  command: source ./run.sh
+  containerPort: 8000
