@@ -7,5 +7,5 @@ rm -R "$PROMETHEUS_MULTIPROC_DIR"
 fi
 mkdir "$PROMETHEUS_MULTIPROC_DIR"
 
-python3 -m alembic upgrade head
-python3 main.py
+python -m alembic upgrade head
+python main.py
