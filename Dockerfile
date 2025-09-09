@@ -8,4 +8,5 @@ RUN mkdir keys
 RUN apk add openssl
 RUN openssl genrsa --out ./keys/private.pem 2048
 RUN openssl rsa --in ./keys/private.pem --outform PEM --pubout --out ./keys/public.pem
+RUN chmod 777 ./run.sh
 CMD ["./run.sh"]
