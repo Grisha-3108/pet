@@ -1,5 +1,6 @@
 import asyncio
 from logging.config import fileConfig
+from ssl import create_default_context
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
@@ -74,7 +75,7 @@ async def run_async_migrations() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
-        connect_args = {'ssl': settings.db.sslmode}
+        connect_args = {'ssl': create_default_context() if settings.test_db.sslmode else 'disable'}
     )
 
     async with connectable.connect() as connection:
