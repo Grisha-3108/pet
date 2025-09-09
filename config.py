@@ -78,6 +78,7 @@ class Settings(BaseSettings):
     workers: int = 2
     host: str = '0.0.0.0'
     port: int = 8000
+    log_level: str = 'info' # 'waring', 'error'
 
     model_config = SettingsConfigDict(
         case_sensitive=False,

@@ -1,0 +1,31 @@
+services:
+  web:
+    image: nginx:1.29.1-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx_prod/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+     - myappnet
+  myapp:
+    image: myapp:stable
+    container_name: myapp
+    restart: always
+    environment:
+      - AUTH__EMAIL__HOST=smtp.yandex.ru
+      - AUTH__EMAIL__PORT=465
+      - AUTH__EMAIL__USERNAME=user
+      - AUTH__EMAIL__PASSWORD=password
+      - AUTH__EMAIL__SENDER=user
+      - AUTH__RABBITMQ__HOST=rabbitmq
+      - AUTH__TEST_RABBITMQ__HOST=rabbit
+      - AUTH__DB__HOST=database
+      - AUTH__TEST_DB__HOST=database
+    networks:
+      - myappnet
+
+networks:
+  myappnet:
+    driver: bridge
