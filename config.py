@@ -56,7 +56,7 @@ class RabbitMQ(BaseModel):
 
     @computed_field
     def connection(self) -> str:
-        return f'amqp{'s' if self.ssl else ''}://{self.username}:{self.password}@{self.host}:{self.port}/vhost'
+        return f'amqp{'s' if self.ssl else ''}://{self.username}:{self.password}@{self.host}:{self.port}'
     
 class Prometheus(BaseModel):
     endpoint: str = '/metrics'
@@ -88,6 +88,3 @@ class Settings(BaseSettings):
     )
 
 settings = Settings()
-
-print(settings.rabbitmq.connection)
-print(settings.test_rabbitmq.connection)
