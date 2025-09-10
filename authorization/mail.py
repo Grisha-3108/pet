@@ -5,7 +5,7 @@ import aiosmtplib
 
 from config import settings
 
-html_form_pattern = '''<html><body><form enctype="application/json", method="post", action="localhost:8000/verify">
+html_form_pattern = '''<html><body><form enctype="application/json", method="post", action="{host}/verify">
     <fieldset>
         <legend>Подтверждение почты</legend>
         <input type="hidden" value="{token}" name="token">
@@ -16,7 +16,7 @@ html_form_pattern = '''<html><body><form enctype="application/json", method="pos
 
 async def send_verify_request(email: str, token: str):
     message = MIMEMultipart('alternative')
-    html = MIMEText(html_form_pattern.format(token=token), 'html', 'utf-8')
+    html = MIMEText(html_form_pattern.format(token=token, host=settings.base_url), 'html', 'utf-8')
     plain = MIMEText(F'Введите код подтверждения {token}', 'plain', 'utf-8')
     message['From'] = settings.email.sender
     message['To'] = email

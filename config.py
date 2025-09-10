@@ -14,7 +14,7 @@ class Database(BaseModel):
     username: str = 'admin'
     password: str = 'admin'
     name: str = 'auth'
-    sslmode: bool = False
+    sslmode: str = 'disable' # allow prefer require verify-ca verify-full
     isolation_level: str = 'READ COMMITTED' #or REPEATABLE READ or SERIALIZABLE
 
     @computed_field
@@ -74,7 +74,7 @@ class Settings(BaseSettings):
     test_rabbitmq: RabbitMQ = RabbitMQ(login_queue='test_login_users', logout_queue='test_logout_users')
     prometheus: Prometheus = Prometheus()
     test_mode: bool = False
-    test_base_url: HttpUrl = 'http://localhost'
+    base_url: HttpUrl = 'http://localhost'
     workers: int = 2
     host: str = '0.0.0.0'
     port: int = 8000

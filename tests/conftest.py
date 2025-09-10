@@ -43,7 +43,7 @@ async def db_admin(async_session):
 @pytest_asyncio.fixture(scope='session')
 async def test_client(request, db_admin) -> AsyncGenerator[httpx.AsyncClient, None]:
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), 
-                                 base_url=str(settings.test_base_url)) as client:
+                                 base_url=str(settings.base_url)) as client:
         response = await client.post(str(settings.auth_prefix) + '/login', 
                                      data={'grant_type': 'password',
                                            'username': 'Grisha-3108@yandex.ru', 

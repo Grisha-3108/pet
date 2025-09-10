@@ -75,7 +75,7 @@ async def run_async_migrations() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
-        connect_args = {'ssl': create_default_context() if settings.test_db.sslmode else 'disable'}
+        connect_args = {'ssl': settings.test_db.sslmode}
     )
 
     async with connectable.connect() as connection:
