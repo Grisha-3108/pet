@@ -48,16 +48,15 @@ class RabbitMQ(BaseModel):
     port: int = 5672
     username: str = 'admin'
     password: str = 'admin'
-    ssl: bool = True
+    ssl: bool = False
     login_queue: str = 'login_users'
     logout_queue: str = 'logout_users'
-    ca_path: str = '/etc/ssl/certs'
     
     message_ttl: int | timedelta = 3600
 
     @computed_field
     def connection(self) -> str:
-        return f'amqp{'s' if self.ssl else ''}://{self.username}:{self.password}@{self.host}:{self.port}/vhost{f'?capath={self.ca_path}' if self.ssl else ''}'
+        return f'amqp{'s' if self.ssl else ''}://{self.username}:{self.password}@{self.host}:{self.port}/vhost'
     
 class Prometheus(BaseModel):
     endpoint: str = '/metrics'
