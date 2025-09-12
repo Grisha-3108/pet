@@ -22,7 +22,10 @@ jobs:
     needs: build
     steps:
       - name: test
-        run: find /home/runner/ -name docker-compose-test.yml
+        run: |
+          find /home/runner/ -name docker-compose-test.yml > res.txt
+          cat res.txt
+          exit 1
         # run: docker compose -f ../../docker-compose-test.yml run --rm \
         #       -e AUTH__TEST_DB__HOST= ${{secrets.DB_HOST}} \
         #       -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} \
