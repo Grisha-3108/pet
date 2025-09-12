@@ -1,0 +1,31 @@
+name: build and test myapp
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag myapp:stable
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: test
+      - run: docker compose -f docker-compose-test.yml run --rm \
+              -e AUTH__TEST_DB__HOST= ${{secrets.DB_HOST}} \
+              -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} \
+              -e AUTH__TEST_DB__PASSWORD=${{secrets.DB_PASSWORD}}  \
+              -e AUTH__TEST_DB__SSLMODE=${{secrets.DB_SSLMODE}}  \
+              -e AUTH__TEST_DB__NAME=${{secrets.DB_NAME}}  \
+              myapp
