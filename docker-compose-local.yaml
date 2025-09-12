@@ -1,16 +1,16 @@
 services:
-  # web:
-  #   image: nginx:1.29.1-alpine
-  #   container_name: nginx
-  #   volumes:
-  #     - ./nginx_dev/nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - "8020:80"
-  #   environment:
-  #     - NGINX_HOST=localhost
-  #     - NGINX_PORT=80
-  #   networks:
-  #    - myappnet
+  web:
+    image: nginx:1.29.1-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx_dev/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8020:80"
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    networks:
+     - myappnet
   myapp:
     image: myapp:stable
     container_name: myapp
@@ -25,8 +25,8 @@ services:
       - AUTH__TEST_RABBITMQ__HOST=rabbitmq
       - AUTH__DB__HOST=database
       - AUTH__TEST_DB__HOST=database
-    ports:
-    - 8000:8000
+    # ports:
+    # - 8000:8000
     networks:
       - myappnet
     depends_on:
