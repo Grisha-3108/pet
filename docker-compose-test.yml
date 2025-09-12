@@ -19,6 +19,8 @@ services:
     networks:
       - myappnet
     depends_on:
+      db:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
 
@@ -40,6 +42,41 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+
+  db:
+    image: postgres:13.22-alpine3.22
+    container_name: postgres_alpine
+    hostname: database
+    restart: always
+    # set shared memory limit when using docker compose
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: auth
+    # ports:
+    #   - 5432:5432
+    networks:
+      - myappnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1024M'
+        reservations:
+          cpus: '0.05'
+          memory: '256M'
 
 networks:
   myappnet:
