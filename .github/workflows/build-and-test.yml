@@ -22,10 +22,11 @@ jobs:
     needs: build
     steps:
       - name: test
-        run: docker compose -f ../../docker-compose-test.yml run --rm \
-              -e AUTH__TEST_DB__HOST= ${{secrets.DB_HOST}} \
-              -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} \
-              -e AUTH__TEST_DB__PASSWORD=${{secrets.DB_PASSWORD}}  \
-              -e AUTH__TEST_DB__SSLMODE=${{secrets.DB_SSLMODE}}  \
-              -e AUTH__TEST_DB__NAME=${{secrets.DB_NAME}}  \
-              myapp
+        run: find / -name docker-compose-test.yml
+        # run: docker compose -f ../../docker-compose-test.yml run --rm \
+        #       -e AUTH__TEST_DB__HOST= ${{secrets.DB_HOST}} \
+        #       -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} \
+        #       -e AUTH__TEST_DB__PASSWORD=${{secrets.DB_PASSWORD}}  \
+        #       -e AUTH__TEST_DB__SSLMODE=${{secrets.DB_SSLMODE}}  \
+        #       -e AUTH__TEST_DB__NAME=${{secrets.DB_NAME}}  \
+        #       myapp
