@@ -22,7 +22,7 @@ services:
       - AUTH__EMAIL__PASSWORD=password
       - AUTH__EMAIL__SENDER=user
       - AUTH__RABBITMQ__HOST=rabbitmq
-      - AUTH__TEST_RABBITMQ__HOST=rabbit
+      - AUTH__TEST_RABBITMQ__HOST=rabbitmq
       - AUTH__DB__HOST=database
       - AUTH__TEST_DB__HOST=database
     ports:
