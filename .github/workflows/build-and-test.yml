@@ -22,10 +22,14 @@ jobs:
     needs: build
     steps:
       - name: test
-        run: docker compose run --rm \
-              -e AUTH__TEST_DB__HOST= ${{secrets.DB_HOST}} \
-              -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} \
-              -e AUTH__TEST_DB__PASSWORD=${{secrets.DB_PASSWORD}}  \
-              -e AUTH__TEST_DB__SSLMODE=${{secrets.DB_SSLMODE}}  \
-              -e AUTH__TEST_DB__NAME=${{secrets.DB_NAME}}  \
-              myapp
+        run: |
+            ls -al>&2
+            exit 1
+
+        # run: docker compose run --rm \
+        #       -e AUTH__TEST_DB__HOST= ${{secrets.DB_HOST}} \
+        #       -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} \
+        #       -e AUTH__TEST_DB__PASSWORD=${{secrets.DB_PASSWORD}}  \
+        #       -e AUTH__TEST_DB__SSLMODE=${{secrets.DB_SSLMODE}}  \
+        #       -e AUTH__TEST_DB__NAME=${{secrets.DB_NAME}}  \
+        #       myapp
