@@ -14,7 +14,8 @@ connection: AbstractConnection = None
 async def get_connection() -> AbstractConnection:
     global connection
     if not connection:
-        connection = await connect(settings.rabbitmq.connection)
+        connect_str = settings.test_rabbitmq.connection if settings.test_mode else settings.rabbitmq.connection
+        connection = await connect(connect_str)
     return connection
 
 

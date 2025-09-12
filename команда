@@ -1,0 +1,7 @@
+docker compose -f docker-compose-test.yml run --rm \
+-e AUTH__TEST_DB__HOST=test-auth-grisha-3108.db-msk0.amvera.tech \
+-e AUTH__TEST_DB__USERNAME=grigory \
+-e AUTH__TEST_DB__PASSWORD=GrigoryDB25 \
+-e AUTH__TEST_DB__SSLMODE=prefer \
+-e AUTH__TEST_DB__NAME=test_auth \
+myapp
