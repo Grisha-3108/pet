@@ -18,8 +18,8 @@ jobs:
         run: docker build . --file Dockerfile --tag myapp:stable
       - name: test
         run: docker compose -f docker-compose-test.yml run --rm 
-                  -e AUTH__TEST_DB__HOST=${{secrets.DB_HOST}} 
-                '-e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} 
+                -e AUTH__TEST_DB__HOST=${{secrets.DB_HOST}} 
+                -e AUTH__TEST_DB__USERNAME=${{secrets.DB_NAME}} 
                 -e AUTH__TEST_DB__PASSWORD=${{secrets.DB_PASSWORD}}  
                 -e AUTH__TEST_DB__SSLMODE=${{secrets.DB_SSLMODE}}  
                 -e AUTH__TEST_DB__NAME=${{secrets.DB_NAME}}  
