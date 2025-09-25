@@ -1,13 +1,12 @@
 from contextlib import asynccontextmanager
 import logging
-import os
+
 
 
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from prometheus_client import multiprocess
 
 from authorization.api import auth_router
 from database import async_engine
