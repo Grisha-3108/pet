@@ -37,6 +37,10 @@ app.add_middleware(CORSMiddleware,
                    allow_headers=['*'])
 app.include_router(router=auth_router)
 
+@app.get('/ping')
+def ping_route():
+    return {'message': 'ok'}
+
 
 if __name__ == "__main__":
     uvicorn.run(

@@ -1,6 +1,6 @@
 import uuid
 
-from models import Base
+from models import Base 
 from database import async_session_factory
 from sqlalchemy.sql import select
 
